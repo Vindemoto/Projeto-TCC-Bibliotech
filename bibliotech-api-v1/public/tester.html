@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bibliotech | Testador da API</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #17211b;
+            --muted: #68746d;
+            --paper: #f7f5ef;
+            --panel: #fffdf8;
+            --line: #ddd9ce;
+            --green: #176b52;
+            --green-dark: #0f4e3d;
+            --orange: #c87532;
+            --danger: #a73b32;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background: radial-gradient(circle at 90% 0, #e5efe4 0, transparent 32%), var(--paper);
+            font: 16px/1.5 Georgia, 'Times New Roman', serif;
+        }
+
+        main { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
+        header { border-bottom: 1px solid var(--line); margin-bottom: 28px; padding-bottom: 22px; }
+        .eyebrow { color: var(--orange); font: 700 12px/1.2 Verdana, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+        h1 { margin: 8px 0 4px; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1; font-weight: 500; }
+        header p { color: var(--muted); margin: 12px 0 0; max-width: 680px; }
+        .layout { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); gap: 20px; }
+        section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 22px; box-shadow: 0 10px 24px #2834260b; }
+        h2 { font-size: 1.2rem; margin: 0 0 18px; }
+        label { display: block; color: var(--muted); font: 700 12px/1.2 Verdana, sans-serif; margin: 16px 0 7px; }
+        input, select { width: 100%; border: 1px solid #c9c5b9; border-radius: 4px; background: #fff; color: var(--ink); font: inherit; padding: 10px 11px; }
+        input:focus, select:focus { border-color: var(--green); outline: 2px solid #176b5233; }
+        .hint { color: var(--muted); font: 12px/1.4 Verdana, sans-serif; margin: 7px 0 0; }
+        button { width: 100%; border: 0; border-radius: 4px; background: var(--green); color: #fff; cursor: pointer; font: 700 14px Verdana, sans-serif; margin-top: 22px; padding: 12px 16px; }
+        button:hover { background: var(--green-dark); }
+        button:disabled { cursor: wait; opacity: .65; }
+        .request-line { align-items: center; display: flex; gap: 10px; margin-bottom: 14px; }
+        .method { color: var(--green); font: 700 12px Verdana, sans-serif; letter-spacing: .08em; }
+        code { color: #455149; font: 13px/1.5 'Courier New', monospace; overflow-wrap: anywhere; }
+        pre { background: #19231d; border-radius: 4px; color: #dce8d9; min-height: 280px; margin: 0; overflow: auto; padding: 18px; white-space: pre-wrap; word-break: break-word; }
+        .status { color: var(--muted); font: 12px Verdana, sans-serif; margin: 12px 0 0; }
+        .status.error { color: var(--danger); }
+        @media (max-width: 720px) {
+            main { padding: 28px 0; }
+            .layout { grid-template-columns: 1fr; }
+            section { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <div class="eyebrow">Biblioteca virtual</div>
+        <h1>Testador da API</h1>
+        <p>Escolha uma operação, informe o usuário de teste e veja a resposta JSON devolvida pelo backend.</p>
+    </header>
+
+    <div class="layout">
+        <section>
+            <h2>Nova requisição</h2>
+            <p class="hint">A autenticação usa a sessão do navegador (feita pelo login). Faça login antes de testar aqui, na mesma aba.</p>
+
+            <label for="operation">Operação</label>
+            <select id="operation">
+                <option value="wishlist">Listar lista de desejos</option>
+                <option value="wishlist-add">Adicionar livro à lista</option>
+                <option value="wishlist-remove">Remover livro da lista</option>
+                <option value="notifications">Listar notificações</option>
+                <option value="notification-read">Marcar notificação como lida</option>
+                <option value="notifications-read-all">Marcar todas como lidas</option>
+                <option value="popular-books">Relatório de livros populares</option>
+                <option value="loans">Relatório de empréstimos</option>
+                <option value="active-users">Relatório de usuários ativos</option>
+            </select>
+
+            <div id="parameter-fields"></div>
+            <button id="send" type="button">Enviar requisição</button>
+        </section>
+
+        <section>
+            <h2>Resposta</h2>
+            <div class="request-line">
+                <span class="method" id="method">GET</span>
+                <code id="url">/api/wishlist</code>
+            </div>
+            <pre id="response">A resposta aparecerá aqui.</pre>
+            <p class="status" id="status">Nenhuma requisição enviada.</p>
+        </section>
+    </div>
+</main>
+
+<script>
+    const operation = document.querySelector('#operation');
+    const parameterFields = document.querySelector('#parameter-fields');
+    const methodLabel = document.querySelector('#method');
+    const urlLabel = document.querySelector('#url');
+    const response = document.querySelector('#response');
+    const status = document.querySelector('#status');
+    const sendButton = document.querySelector('#send');
+
+    const operations = {
+        wishlist: { method: 'GET', path: '../api/wishlist', fields: [['sort', 'Ordenação', 'newest']] },
+        'wishlist-add': { method: 'POST', path: '../api/wishlist/{bookId}', fields: [['bookId', 'ID do livro', '1']] },
+        'wishlist-remove': { method: 'DELETE', path: '../api/wishlist/{bookId}', fields: [['bookId', 'ID do livro', '1']] },
+        notifications: { method: 'GET', path: '../api/notifications', fields: [['unread', 'Filtro', '1']] },
+        'notification-read': { method: 'PUT', path: '../api/notifications/{notificationId}/read', fields: [['notificationId', 'ID da notificação', '1']] },
+        'notifications-read-all': { method: 'PUT', path: '../api/notifications/read-all', fields: [] },
+        'popular-books': { method: 'GET', path: '../api/reports/popular-books', fields: [['limit', 'Limite', '20']] },
+        loans: { method: 'GET', path: '../api/reports/loans', fields: [['status', 'Status', 'all']] },
+        'active-users': { method: 'GET', path: '../api/reports/active-users', fields: [['limit', 'Limite', '20']] }
+    };
+
+    function renderFields() {
+        const selected = operations[operation.value];
+        parameterFields.innerHTML = selected.fields.map(([name, label, value]) => `
+            <label for="${name}">${label}</label>
+            <input id="${name}" name="${name}" value="${value}" required>
+        `).join('');
+        methodLabel.textContent = selected.method;
+        updateUrl();
+    }
+
+    function updateUrl() {
+        const selected = operations[operation.value];
+        let path = selected.path;
+        selected.fields.forEach(([name]) => {
+            const field = document.querySelector(`#${name}`);
+            const value = field ? encodeURIComponent(field.value) : `{${name}}`;
+            path = path.replace(`{${name}}`, value);
+        });
+        const query = selected.method === 'GET' && selected.fields.length
+            ? '?' + selected.fields.map(([name]) => `${name}=${encodeURIComponent(document.querySelector(`#${name}`).value)}`).join('&')
+            : '';
+        urlLabel.textContent = path + query;
+    }
+
+    async function sendRequest() {
+        const selected = operations[operation.value];
+        updateUrl();
+        let url = urlLabel.textContent;
+        if (selected.method !== 'GET') {
+            url = selected.path.replace(/\{([^}]+)\}/g, (_, name) => encodeURIComponent(document.querySelector(`#${name}`).value));
+        }
+        sendButton.disabled = true;
+        status.className = 'status';
+        status.textContent = 'Enviando...';
+        response.textContent = '';
+
+        try {
+            const result = await fetch(url, {
+                method: selected.method,
+                headers: { 'Accept': 'application/json' }
+            });
+            const text = await result.text();
+            let body;
+            try { body = JSON.parse(text); } catch { body = text || '(sem conteúdo)'; }
+            response.textContent = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
+            status.textContent = `${result.status} ${result.statusText}`;
+            if (!result.ok) status.className = 'status error';
+        } catch (error) {
+            response.textContent = error.message;
+            status.className = 'status error';
+            status.textContent = 'Não foi possível conectar à API.';
+        } finally {
+            sendButton.disabled = false;
+        }
+    }
+
+    operation.addEventListener('change', renderFields);
+    parameterFields.addEventListener('input', updateUrl);
+    sendButton.addEventListener('click', sendRequest);
+    renderFields();
+</script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+html,
+body {
+width: 100%;
+min-height: 100%;
+}
+
+body {
+min-height: 100vh;
+font-family: Arial, Helvetica, sans-serif;
+color: #ffffff;
+background: #241b45;
+position: relative;
+overflow-x: hidden;
+}
+
+/* Fundo */
+
+.RENDER.BACKGROUND {
+position: fixed;
+inset: 0;
+width: 100%;
+height: 100vh;
+overflow: hidden;
+z-index: 0;
+pointer-events: none;
+}
+
+.RENDER.BACKGROUND::after {
+content: "";
+position: absolute;
+inset: 0;
+background: linear-gradient(
+90deg,
+rgba(35, 24, 75, 0.20) 0%,
+rgba(48, 38, 100, 0.30) 35%,
+rgba(35, 55, 145, 0.48) 65%,
+rgba(20, 55, 170, 0.62) 100%
+);
+z-index: 1;
+}
+
+.RENDER.BACKGROUND img {
+width: 100%;
+height: 100%;
+display: block;
+object-fit: cover;
+object-position: center;
+}
+
+/* Cabeçalho */
+
+.acervo-header {
+position: relative;
+z-index: 2;
+width: 100%;
+padding: 25px 40px 20px;
+text-align: center;
+}
+
+.acervo-logo {
+width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-bottom: 8px;
+}
+
+.acervo-logo img {
+width: 145px;
+height: auto;
+display: block;
+object-fit: contain;
+}
+
+.acervo-header h1 {
+font-size: 28px;
+font-weight: 500;
+line-height: 1.2;
+color: #ffffff;
+margin-bottom: 7px;
+}
+
+.acervo-subtitulo {
+font-size: 12px;
+line-height: 1.5;
+color: rgba(255, 255, 255, 0.70);
+}
+
+/* Conteúdo */
+
+.acervo-container {
+position: relative;
+z-index: 2;
+width: min(1200px, calc(100% - 60px));
+margin: 0 auto;
+padding-bottom: 35px;
+}
+
+/* Área do bibliotecário */
+
+.acervo-admin {
+display: flex;
+justify-content: flex-end;
+margin-bottom: 20px;
+}
+
+.btn-cadastrar {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-height: 38px;
+padding: 0 18px;
+border: 1px solid rgba(0, 167, 181, 0.60);
+border-radius: 5px;
+background: rgba(0, 140, 154, 0.90);
+color: #ffffff;
+text-decoration: none;
+font-size: 11px;
+font-weight: 600;
+transition:
+background 0.2s ease,
+transform 0.2s ease,
+box-shadow 0.2s ease;
+}
+
+.btn-cadastrar:hover {
+background: #00a7b5;
+transform: translateY(-2px);
+box-shadow: 0 8px 18px rgba(0, 167, 181, 0.22);
+}
+
+/* Área dos livros */
+
+.livros-area {
+width: 100%;
+}
+
+.livros-grid {
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 20px;
+}
+
+/* Card */
+
+.livro-card {
+min-width: 0;
+background: rgba(5, 17, 31, 0.94);
+border: 1px solid rgba(75, 105, 125, 0.45);
+border-top: 3px solid #00a7b5;
+border-radius: 7px;
+overflow: hidden;
+box-shadow: 0 15px 30px rgba(0, 0, 0, 0.32);
+transition:
+transform 0.25s ease,
+border-color 0.25s ease,
+box-shadow 0.25s ease;
+}
+
+.livro-card:hover {
+transform: translateY(-5px);
+border-color: rgba(0, 167, 181, 0.75);
+box-shadow: 0 20px 38px rgba(0, 0, 0, 0.45);
+}
+
+/* Capa */
+
+.livro-capa {
+position: relative;
+width: 100%;
+height: 300px;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+background: #071923;
+}
+
+.livro-capa img {
+width: 100%;
+height: 100%;
+display: block;
+object-fit: contain;
+object-position: center;
+transition: transform 0.35s ease;
+}
+
+.livro-card:hover .livro-capa img {
+transform: scale(1.03);
+}
+
+.livro-capa-fallback {
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 25px;
+text-align: center;
+font-size: 16px;
+font-weight: 600;
+line-height: 1.4;
+color: rgba(255, 255, 255, 0.90);
+background: linear-gradient(
+135deg,
+rgba(0, 167, 181, 0.18),
+rgba(20, 55, 170, 0.18)
+);
+}
+
+/* Informações */
+
+.livro-conteudo {
+padding: 17px 16px 16px;
+}
+
+.livro-titulo {
+min-height: 38px;
+margin-bottom: 6px;
+font-size: 15px;
+font-weight: 600;
+line-height: 1.3;
+color: #ffffff;
+}
+
+.livro-autor {
+min-height: 30px;
+margin-bottom: 10px;
+font-size: 11px;
+line-height: 1.4;
+color: rgba(255, 255, 255, 0.65);
+}
+
+.livro-categoria {
+display: inline-flex;
+align-items: center;
+min-height: 23px;
+padding: 0 9px;
+border: 1px solid rgba(0, 167, 181, 0.30);
+border-radius: 12px;
+background: rgba(0, 167, 181, 0.10);
+color: #7de3eb;
+font-size: 9px;
+font-weight: 600;
+}
+
+/* Disponibilidade */
+
+.livro-disponibilidade {
+display: flex;
+align-items: center;
+gap: 7px;
+margin-top: 13px;
+min-height: 20px;
+font-size: 10px;
+}
+
+.status-disponivel {
+color: #61d99b;
+font-weight: 600;
+}
+
+.status-indisponivel {
+color: #ff7777;
+font-weight: 600;
+}
+
+.quantidade-livro {
+color: rgba(255, 255, 255, 0.55);
+}
+
+/* Ações */
+
+.livro-acoes {
+margin-top: 15px;
+}
+
+.livro-acoes form {
+width: 100%;
+margin: 0;
+padding: 0;
+background: transparent;
+border: none;
+box-shadow: none;
+}
+
+.btn-solicitar,
+.btn-editar,
+.btn-indisponivel {
+width: 100%;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 4px;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 10px;
+font-weight: 600;
+text-decoration: none;
+transition:
+background 0.2s ease,
+transform 0.15s ease,
+box-shadow 0.2s ease;
+}
+
+/* Botão solicitar */
+
+.btn-solicitar {
+border: none;
+background: #008c9a;
+color: #ffffff;
+cursor: pointer;
+}
+
+.btn-solicitar::before {
+content: "📚";
+display: inline-block;
+margin-right: 7px;
+font-size: 13px;
+transition: transform 0.25s ease;
+}
+
+.btn-solicitar:hover {
+background: #00a7b5;
+box-shadow: 0 6px 15px rgba(0, 167, 181, 0.22);
+transform: translateY(-1px);
+}
+
+.btn-solicitar:hover::before {
+transform: translateY(-2px) rotate(-5deg);
+}
+
+.btn-solicitar:active {
+transform: scale(0.98);
+}
+
+/* Botão editar */
+
+.btn-editar {
+background: rgba(0, 140, 154, 0.15);
+border: 1px solid rgba(0, 167, 181, 0.55);
+color: #7de3eb;
+}
+
+.btn-editar:hover {
+background: #008c9a;
+color: #ffffff;
+transform: translateY(-1px);
+}
+
+/* Botão indisponível */
+
+.btn-indisponivel {
+background: rgba(255, 75, 75, 0.08);
+border: 1px solid rgba(255, 100, 100, 0.25);
+color: #ff7777;
+}
+
+/* Voltar */
+
+.acervo-voltar {
+display: flex;
+justify-content: center;
+margin-top: 28px;
+}
+
+.acervo-voltar a {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 110px;
+height: 36px;
+padding: 0 18px;
+border: 1px solid rgba(255, 255, 255, 0.20);
+border-radius: 4px;
+background: rgba(5, 17, 31, 0.65);
+color: rgba(255, 255, 255, 0.80);
+font-size: 10px;
+font-weight: 600;
+text-decoration: none;
+transition:
+background 0.2s ease,
+color 0.2s ease,
+transform 0.2s ease;
+}
+
+.acervo-voltar a::before {
+content: "↩️";
+display: inline-block;
+margin-right: 7px;
+font-size: 13px;
+transition: transform 0.25s ease;
+}
+
+.acervo-voltar a:hover {
+background: rgba(5, 17, 31, 0.90);
+color: #ffffff;
+transform: translateY(-1px);
+}
+
+.acervo-voltar a:hover::before {
+transform: translateX(-4px);
+}
+
+/* Tablet */
+
+@media (max-width: 1050px) {
+
+.livros-grid {
+grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.acervo-container {
+width: min(900px, calc(100% - 40px));
+}
+
+.livro-capa {
+height: 270px;
+}
+
+}
+
+/* Celular */
+
+@media (max-width: 750px) {
+
+body {
+overflow-y: auto;
+}
+
+.acervo-header {
+padding: 20px 20px 18px;
+}
+
+.acervo-logo img {
+width: 130px;
+}
+
+.acervo-header h1 {
+font-size: 24px;
+}
+
+.acervo-subtitulo {
+font-size: 11px;
+}
+
+.acervo-container {
+width: calc(100% - 30px);
+}
+
+.acervo-admin {
+justify-content: center;
+margin-bottom: 18px;
+}
+
+.btn-cadastrar {
+width: 100%;
+max-width: 300px;
+}
+
+.livros-grid {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 15px;
+}
+
+.livro-capa {
+height: 280px;
+}
+
+.livro-conteudo {
+padding: 16px 14px 15px;
+}
+
+.livro-titulo {
+font-size: 14px;
+}
+
+.livro-autor {
+font-size: 10px;
+}
+
+}
+
+/* Celular pequeno */
+
+@media (max-width: 480px) {
+
+.acervo-header {
+padding-top: 15px;
+}
+
+.acervo-logo img {
+width: 115px;
+}
+
+.acervo-header h1 {
+font-size: 22px;
+}
+
+.acervo-container {
+width: calc(100% - 24px);
+}
+
+.livros-grid {
+grid-template-columns: 1fr;
+gap: 18px;
+}
+
+.livro-capa {
+height: 320px;
+}
+
+.livro-conteudo {
+padding: 18px 16px 16px;
+}
+
+.livro-titulo {
+font-size: 16px;
+}
+
+.livro-autor {
+font-size: 11px;
+}
+
+.btn-solicitar,
+.btn-editar,
+.btn-indisponivel {
+height: 40px;
+font-size: 11px;
+}
+
+}
+
+/* Altura reduzida */
+
+@media (max-height: 700px) and (min-width: 751px) {
+
+.acervo-header {
+padding-top: 15px;
+padding-bottom: 12px;
+}
+
+.acervo-logo img {
+width: 110px;
+}
+
+.acervo-header h1 {
+font-size: 23px;
+}
+
+.livro-capa {
+height: 270px;
+}
+
+.livro-conteudo {
+padding-top: 13px;
+padding-bottom: 13px;
+}
+
+}
